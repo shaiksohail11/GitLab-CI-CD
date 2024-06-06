@@ -1,0 +1,97 @@
+variables:
+    # IGNORE_ERRORS:
+    #     description: "Skips Errors without Halting Pipeline to Generate Reports"
+    #     value: "false"
+    #     options:
+    #         - "true"
+    #         - "false"
+    
+    # WEBSITE:
+    #     description: "Website to Scan for Threats"
+    #     value: "https://dev-brinks.voziq.com/"
+
+    DEV_VM_NAME:
+        description: "Machine to Refresh services On"
+        value: "front-point-vm"
+        options: 
+            - "brinks-vm"
+            - "front-point-vm"
+            - "ga-vm"
+            - "mac-vm"
+
+    GUIDANCE_APP: 
+        description: "Set true to Refresh Guidance Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    GUIDANCE_APP_BRANCH_NAME: 
+         description: "Guidance Branch Name to be Refreshed"
+         value: ""
+
+    LOW_CODE_APP: 
+        description: "Set true to Refresh Low Code Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    LOW_CODE_APP_BRANCH_NAME: 
+         description: "Branch Name to be Refreshed"
+         value: ""    
+
+    MASTER_APP: 
+        description: "Set true to Refresh Master Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    MASTER_APP_BRANCH_NAME: 
+        description: "Branch Name to be Refreshed"
+        value: ""
+       
+    AUTH_APP: 
+        description: "Set true to Refresh Authorization Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    AUTH_APP_BRANCH_NAME: 
+        description: "Authorization Branch Name to be Refreshed"
+        value: ""
+
+    OFFERS_APP: 
+        description: "Set true to Refresh Offers Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    OFFERS_APP_BRANCH_NAME: 
+        description: "Offers Branch Name to be Refreshed"
+        value: ""
+    
+    UI_APP: 
+        description: "Set true to Refresh UI Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    UI_APP_BRANCH_NAME: 
+        description: "App Branch Name to be Refreshed"
+        value: ""
+
+    DATA_APP: 
+        description: "Set true to Refresh Data Service"
+        value: "false"
+        options:
+            - "true"
+            - "false"
+
+    DATA_APP_BRANCH_NAME: 
+        description: "Data Branch Name to be Refreshed"
+        value: ""    

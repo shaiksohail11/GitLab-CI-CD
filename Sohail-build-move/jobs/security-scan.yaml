@@ -1,0 +1,22 @@
+security-scan:
+  stage: security-scan
+  image: owasp/zap2docker-stable
+  before_script:
+    - |
+      if [ "$IGNORE_ERRORS" = "true" ]; then
+        SKIP_ERRORS="-I"
+      else
+        SKIP_ERRORS=""
+      fi
+  script:
+    - mkdir -p /zap/wrk
+    - path=$(pwd)
+    - mkdir -p $path/owasp
+    - zap-full-scan.py -t https://dev-brinks.voziq.com/ $SKIP_ERRORS -d -j -l WARN -r $path/owasp/root.html
+    - zap-full-scan.py -t https://dev-brinks.voziq.com/ag-api $SKIP_ERRORS -d -j -l WARN -r $path/owasp/ag-api.html
+    - zap-full-scan.py -t https://dev-brinks.voziq.com/auth-api $SKIP_ERRORS -d -j -l WARN -r $path/owasp/auth-api.html
+    - zap-full-scan.py -t https://dev-brinks.voziq.com/data-api $SKIP_ERRORS -d -j -l WARN -r $path/owasp/data-api.html
+    # - zap-full-scan.py -t $WEBSITE -d -j -I -l WARN -r $path/owasp/root.html
+  artifacts:
+    paths:
+      - ./owasp/*.html

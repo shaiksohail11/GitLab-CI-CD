@@ -1,0 +1,10 @@
+stages:
+    - security-scan
+    - env-data
+    - guidance-app
+    - low-code-app
+    - master-app
+    - offers-app
+    - ui-app
+    - auth-app
+    - data-app

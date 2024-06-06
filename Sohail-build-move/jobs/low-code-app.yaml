@@ -1,0 +1,25 @@
+low-code-app:
+    stage: low-code-app
+    image: beta-registry.voziq.com/voziq/releases/teja-build-move
+    before_script:
+        - |
+            source setup.env
+            eval $(ssh-agent -s)
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/private_key
+            chmod 600 ~/.ssh/private_key
+            ssh-keyscan $VM_IP >> ~/.ssh/known_hosts  
+    script:
+        - |
+            echo -e "\tRefreshing 'LOW_CODE SERVICE' on\n\n\tVirtual Machine Name:\t$DEV_VM_NAME\n\tVirtual Machine IP:\t$VM_IP" | boxes -d boy -p h5v1
+            curl --header "PRIVATE-TOKEN: $GITLAB_ACCESS_TOKEN" "$GITLAB_URL/$LOW_CODE_APP_PROJECT_ID/jobs/artifacts/$LOW_CODE_APP_BRANCH_NAME/download?job=build" --output artifacts.zip
+            mkdir -p artifacts/low-code-app
+            unzip artifacts.zip
+            mv target/*.jar ./artifacts/low-code-app/
+            scp -i ~/.ssh/private_key ./artifacts/low-code-app/*.jar root@$VM_IP:/disk1/voziq-mount/devops-pipeline-builds/low-code-app/
+            ssh -i ~/.ssh/private_key root@$VM_IP 'bash -s' < ./scripts/low-code-app.sh
+            echo 'JOB DONE' | boxes -d spring -p v2h10
+    dependencies:
+        - env-data
+    rules:
+        - if: '$LOW_CODE_APP == "true"'

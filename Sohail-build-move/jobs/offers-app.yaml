@@ -1,0 +1,21 @@
+offers-app:
+    stage: offers-app
+    image: beta-registry.voziq.com/voziq/releases/teja-build-move
+    before_script:
+        - |
+            source setup.env
+            eval $(ssh-agent -s)
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/private_key
+            chmod 600 ~/.ssh/private_key
+            ssh-keyscan $VM_IP >> ~/.ssh/known_hosts  
+    script:
+        - |
+            echo -e "\tRefreshing 'OFFERS SERVICE' on\n\n\tVirtual Machine Name:\t$DEV_VM_NAME\n\tVirtual Machine IP:\t$VM_IP" | boxes -d boy -p h5v1
+            ssh -i ~/.ssh/private_key root@$VM_IP "bash -c 'cd /disk1/builds/voziq-offers/; ls -l; curl --header "PRIVATE-TOKEN:$GITLAB_ACCESS_TOKEN" "$GITLAB_URL/$OFFERS_APP_PROJECT_ID/jobs/artifacts/$OFFERS_APP_BRANCH_NAME/download?job=build" --output artifacts.zip;unzip artifacts.zip; ls -l'"
+            ssh -i ~/.ssh/private_key root@$VM_IP 'bash -s' < ./scripts/offers-app.sh
+            echo 'JOB DONE' | boxes -d spring -p v2h10
+    dependencies:
+        - env-data
+    rules:
+        - if: '$OFFERS_APP == "true" && $OFFERS_APP_BRANCH_NAME != ""'

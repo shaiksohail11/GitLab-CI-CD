@@ -1,0 +1,108 @@
+env-data:
+    stage: env-data
+    image: beta-registry.voziq.com/voziq/releases/teja-build-move
+    before_script:
+        - |
+            # If no branch name is given exit the pipeline
+
+            if [[ "$GUIDANCE_APP" == "true" ]] && [[ -z "$GUIDANCE_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  GUIDANCE_APP_BRANCH_NAME not specified.    |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+            if [[ "$LOW_CODE_APP" == "true" ]] && [[ -z "$LOW_CODE_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  LOW_CODE_APP_BRANCH_NAME not specified.    |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+            if [[ "$MASTER_APP" == "true" ]] && [[ -z "$MASTER_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  MASTER_APP_BRANCH_NAME not specified.      |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+            if [[ "$AUTH_APP" == "true" ]] && [[ -z "$AUTH_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  AUTH_APP_BRANCH_NAME not specified.        |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+            if [[ "$OFFERS_APP" == "true" ]] && [[ -z "$OFFERS_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  OFFERS_APP_BRANCH_NAME not specified.      |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+            if [[ "$UI_APP" == "true" ]] && [[ -z "$UI_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  UI_APP_BRANCH_NAME not specified.          |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+            if [[ "$DATA_APP" == "true" ]] && [[ -z "$DATA_APP_BRANCH_NAME" ]]; then
+                echo "+---------------------------------------------+"
+                echo "|  DATA_APP_BRANCH_NAME not specified.        |"
+                echo "|  Pipeline will not run.                     |"
+                echo "+---------------------------------------------+"
+            fi
+
+    script:
+        - |
+            # Linking Name with Machine IP
+            case "$DEV_VM_NAME" in
+            "front-point-vm")
+                echo "VM_IP=$FRONT_POINT_VM_IP" >> setup.env
+                echo "SSH_PRIVATE_KEY='$FRONT_POINT_VM_PRIVATE_KEY'" >> setup.env
+                ;;
+
+            "brinks-vm")
+                echo "VM_IP=$BRINKS_VM_IP" >> setup.env  
+                echo "SSH_PRIVATE_KEY='$BRINKS_VM_PRIVATE_KEY'" >> setup.env  
+                ;;
+
+            "mac-vm")
+                echo "VM_IP=$MAC_VM_IP" >> setup.env  
+                echo "SSH_PRIVATE_KEY='$MAC_VM_PRIVATE_KEY'" >> setup.env  
+                ;;
+
+            "ga-vm")
+                echo "VM_IP=$GA_VM_IP" >> setup.env  
+                echo "SSH_PRIVATE_KEY='$GA_VM_PRIVATE_KEY'" >> setup.env  
+                ;;
+            *)
+            esac
+
+            # Display Environment Details
+            source setup.env
+            output="\tPIPELINE DETAILS:\n\nVirtual Machine Name:\t$DEV_VM_NAME\n\nVirtual Machine IP:\t$VM_IP\n\nServices To Refresh:\n"
+            if [[ "${GUIDANCE_APP}" == "true" ]]; then
+                output+="\t\t\t# GUIDANCE_APP\n"
+            fi
+            if [[ "${LOW_CODE_APP}" == "true" ]]; then
+                output+="\t\t\t# LOW_CODE_APP\n"
+            fi
+            if [[ "${MASTER_APP}" == "true" ]]; then
+                output+="\t\t\t# MASTER_APP\n"
+            fi
+            if [[ "${OFFERS_APP}" == "true" ]]; then
+                output+="\t\t\t# OFFERS_APP\n"
+            fi
+            if [[ "${AUTH_APP}" == "true" ]]; then
+                output+="\t\t\t# AUTH_APP\n"
+            fi
+            if [[ "${UI_APP}" == "true" ]]; then
+                output+="\t\t\t# UI_APP\n"
+            fi
+            if [[ "${DATA_APP}" == "true" ]]; then
+                output+="\t\t\t# DATA_APP\n"
+            fi
+            if [[ "${GUIDANCE_APP}" == "false" && "${LOW_CODE_APP}" == "false" && "${MASTER_APP}" == "false" && "${AUTH_APP}" == "false" && "${DATA_APP}" == "false" && "${OFFERS_APP}" == "false" && "${UI_APP}" == "false" ]]; then
+                output+="\t\t# You forgot to refresh a Services...\n"
+            fi
+            printf "${output}" |  boxes -p h10v1 -d boy
+
+    artifacts:
+        paths:
+            - setup.env
