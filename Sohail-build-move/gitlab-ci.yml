@@ -1,0 +1,12 @@
+include: 
+    - local: "jobs/variables.yaml"
+    - local: "jobs/pipeline-stages.yaml"
+    - local: "jobs/env-data.yaml"
+    - local: "jobs/guidance-app.yaml"
+    - local: "jobs/low-code-app.yaml"
+    - local: "jobs/master-app.yaml"
+    - local: "jobs/offers-app.yaml"
+    - local: "jobs/ui-app.yaml"
+    - local: "jobs/voziq-auth.yaml"
+    - local: "jobs/data-app.yaml"
+    # - local: "jobs/security-scan.yaml"
